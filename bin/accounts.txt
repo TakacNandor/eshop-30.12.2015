@@ -1,0 +1,28 @@
+Nickname: Nandy
+Password: 123456
+FirstName: Nandor
+LastName: Takac
+Address: Kosice
+Phone number: 0915650610
+
+Nickname: Ima
+Password: Ima123
+FirstName: Ivana
+LastName: Kralikova
+Address: Podhradova
+Phone number: 0907123456
+
+Nickname: Sado
+Password: Sado123
+FirstName: Adam
+LastName: Langa
+Address: Presov
+Phone number: 0908321654
+
+Nickname: Gabi
+Password: Gabi123
+FirstName: Gabriel
+LastName: Erdelyi
+Address: Kosice
+Phone number: 123456789
+

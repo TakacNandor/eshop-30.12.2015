@@ -4,13 +4,14 @@ public class Customer {
 
 	private String username;
 	private String password;
-	private boolean admin;
+	private boolean privilege;
 	
 
-	public Customer(String username, String password) {
+	public Customer(String username, String password, boolean privilege) {
 		super();
 		this.username = username;
 		this.password = password;
+		this.privilege = privilege;
 		
 	}
 
@@ -28,6 +29,14 @@ public class Customer {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isPrivilege() {
+		return privilege;
+	}
+
+	public void setPrivilege(boolean privilege) {
+		this.privilege = privilege;
 	}
 
 	

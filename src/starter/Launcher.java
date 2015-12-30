@@ -7,42 +7,31 @@ import java.util.List;
 
 import Controller.ProductController;
 import account.Account;
+import account.Login;
 import data.Customer;
 import data.Order;
 import data.Product;
 
 public class Launcher {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception{
 
 		List<Product> productList = new ArrayList<>();
 		List<Customer> customerList = new ArrayList<>();
 		List<Order> orderList = new ArrayList<>();
 
 		
-		///PrintWriter writer =  new PrintWriter("src\\accounts.txt");
 		Menu menu = new Menu(productList, customerList, orderList);
-		/*Product pro1 = new Product("meno", "popis");
-		Product pro2 = new Product("asdasd", "pohdfhgdfghddfgpis");
-		Product pro3 = new Product("menfsdfso", "pophdfghfghdgfghdfgis");
-		Product pro4 = new Product("mengdfgdfgo", "popfdhdfhdfghdfghdfghfdghdfghis");
+		Login login = new Login();
 		
-		List<Product> l = new ArrayList<>();
-		l.add(pro1);
-		l.add(pro2);
-		l.add(pro3);
-		l.add(pro4);
 		
-		ProductController p = new ProductController(l);
-		System.out.println(p.toString());*/
+		login.userLogin();
 		menu.getMenu();
-
-		menu.menuOption();
+		//login.userLogout();
 		
-		//Account acc = new Account();
 		
-		//writer.println("trololo");
-		//acc.createAcc();
+				
+		
 		
 	}
 

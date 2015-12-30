@@ -8,14 +8,15 @@ import java.sql.Statement;
 import java.util.*;
 
 import data.Product;
+import starter.connect_DB;
 
-public class ProductController {
+public class ProductController extends connect_DB {
 
-	private List<Product> productList = new ArrayList<>();
+	// private List<Product> productList = new ArrayList<>();
 	Scanner input = new Scanner(System.in);
 
 	public ProductController(List<Product> product) {
-		this.productList = product;
+		// this.productList = product;
 	}
 
 	/**
@@ -25,19 +26,17 @@ public class ProductController {
 	 *            je meno produktu
 	 * @param description
 	 *            je popis produktu
+	 * @throws SQLException
 	 */
-	public void addProduct(String name, String desc, int price) {
-
+	public void addProduct(String name, String desc, int price, int count) throws SQLException {
+		Connection conn = getDBConnection();
+		Statement stmt = null;
+		ResultSet result = null;
 		boolean a = true;
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-		}
-		Connection connection = null;
-		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/eshop_db?user=root&password=");
-			Statement statement = connection.createStatement();
-			ResultSet result = statement.executeQuery("select product_name from product");
+
+			stmt = conn.createStatement();
+			result = stmt.executeQuery("select product_name from product");
 			while (result.next()) {
 
 				if (result.getString("product_name").equals(name)) {
@@ -47,15 +46,18 @@ public class ProductController {
 				}
 			}
 			if (a) {
-				statement.executeUpdate(
-						"INSERT INTO `product` (`id_product`, `product_name`, `product_desc`, `price`) VALUES (NULL, '"
-								+ name + "', '" + desc + "', '" + price + "');");
+				stmt.executeUpdate(
+						"INSERT INTO `product` (`id_product`, `product_name`, `product_desc`, `price`, `count`) VALUES (NULL, '"
+								+ name + "', '" + desc + "', '" + price + "', '" + count + "');");
 			}
-			connection.close();
-		} catch (SQLException sx) {
-			System.out.println("SQLException: " + sx.getMessage());
-			System.out.println("SQLState: " + sx.getSQLState());
-			System.out.println("VendorError: " + sx.getErrorCode());
+
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
 
 	}
@@ -66,32 +68,29 @@ public class ProductController {
 	 * @param name
 	 *            meno produktu
 	 * @return vrati produkt ktory hladame
+	 * @throws SQLException
 	 */
-	public Product searchByName(String name) {
+	public void searchByName(String name) throws SQLException {
+		Connection conn = getDBConnection();
+		Statement stmt = null;
+		ResultSet result = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-		}
-		Connection connection = null;
-		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/eshop_db?user=root&password=");
-			Statement statement = connection.createStatement();
-			ResultSet result = statement
-					.executeQuery("select product_name from product where product_name like '" + name + "%'");
+			stmt = conn.createStatement();
+			result = stmt.executeQuery("select product_name from product where product_name like '" + name + "%'");
 			while (result.next()) {
 				System.out.println("Search resut: ");
 				System.out.print(result.getString("product_name"));
 				System.out.println("\n");
-
 			}
 
-			connection.close();
-		} catch (SQLException sx) {
-			System.out.println("SQLException: " + sx.getMessage());
-			System.out.println("SQLState: " + sx.getSQLState());
-			System.out.println("VendorError: " + sx.getErrorCode());
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
-		return null;
 	}
 
 	/**
@@ -99,23 +98,22 @@ public class ProductController {
 	 * 
 	 * @param produkt
 	 *            ktory chceme zmazat
+	 * @throws SQLException
 	 */
-	public void deleteProduct(String name) {
+	public void deleteProduct(String name) throws SQLException {
+		Connection conn = getDBConnection();
+		Statement stmt = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-		}
-		Connection connection = null;
-		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/eshop_db?user=root&password=");
-			Statement statement = connection.createStatement();
-			statement.executeUpdate("DELETE FROM product WHERE product_name='" + name + "';");
+			stmt = conn.createStatement();
+			stmt.executeUpdate("DELETE FROM product WHERE product_name='" + name + "';");
 
-			connection.close();
-		} catch (SQLException sx) {
-			System.out.println("SQLException: " + sx.getMessage());
-			System.out.println("SQLState: " + sx.getSQLState());
-			System.out.println("VendorError: " + sx.getErrorCode());
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
 	}
 
@@ -128,61 +126,81 @@ public class ProductController {
 	 *            nove meno
 	 * @param description
 	 *            novy popis
+	 * @throws SQLException
 	 */
-	public void modifyProduct(String oldName, String newName, String desc, int cena) {
+	public void modifyProduct(String oldName, String newName, String desc, int cena, int count) throws SQLException {
+		Connection conn = getDBConnection();
+		Statement stmt = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-		}
-		Connection connection = null;
-		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/eshop_db?user=root&password=");
-			Statement statement = connection.createStatement();
-			
-			//toto mi nefunguje a neviem preco
-			statement.executeUpdate("UPDATE product SET product_name='"+newName+"', product_desc='"+desc+"', price="+cena+" WHERE product.product_name ='"+oldName+"';");
-			
-			connection.close();
-		} catch (SQLException sx) {
-			System.out.println("SQLException: " + sx.getMessage());
-			System.out.println("SQLState: " + sx.getSQLState());
-			System.out.println("VendorError: " + sx.getErrorCode());
+
+			stmt = conn.createStatement();
+			stmt.executeUpdate("UPDATE product SET product_name='" + newName + "', product_desc='" + desc + "', price="
+					+ cena + ", price=" + count + " WHERE product.product_name ='" + oldName + "';");
+
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
 	}
 
-	
+	public void showAllProducts() throws SQLException {
+		Connection conn = getDBConnection();
+		Statement stmt = null;
+		ResultSet result = null;
+		try {
+			stmt = conn.createStatement();
+
+			result = stmt.executeQuery("select product_name from product;");
+			System.out.print("List of products: ");
+			while (result.next()) {
+				System.out.print(result.getString("product_name"));
+				System.out.print(", ");
+			}
+
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		}
+	}
 
 	/**
 	 * vypise info o produkte
 	 * 
 	 * @param product
 	 *            produkt, ktoreho info chceme vziskat
+	 * @throws SQLException
 	 */
-	public void showDetails(String name) {
+	public void showDetails(String name) throws SQLException {
+		Connection conn = getDBConnection();
+		Statement stmt = null;
+		ResultSet result = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-		}
-		Connection connection = null;
-		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/eshop_db?user=root&password=");
-			Statement statement = connection.createStatement();
-			
-			//toto mi nefunguje a neviem preco
-			ResultSet result = statement.executeQuery("select * from product where product_name='"+name+"';");
-			while(result.next()){
-			System.out.println("details: ");
-			System.out.print(result.getString("product_name"));
-			System.out.print("- ");
-			System.out.println(result.getString("product_desc"));
-			System.out.println("Price: "+result.getString("price"));
+			stmt = conn.createStatement();
+			result = stmt.executeQuery("select * from product where product_name='" + name + "';");
+			while (result.next()) {
+				System.out.println("details: ");
+				System.out.print(result.getString("product_name"));
+				System.out.print("- ");
+				System.out.println(result.getString("product_desc"));
+				System.out.println("Price: " + result.getInt("price"));
+				System.out.println("Available: " + result.getInt("count"));
 			}
-			
-			connection.close();
-		} catch (SQLException sx) {
-			System.out.println("SQLException: " + sx.getMessage());
-			System.out.println("SQLState: " + sx.getSQLState());
-			System.out.println("VendorError: " + sx.getErrorCode());
+
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
 	}
 

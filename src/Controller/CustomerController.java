@@ -8,29 +8,25 @@ import java.sql.Statement;
 import java.util.*;
 
 import data.Customer;
+import starter.connect_DB;
 
-public class CustomerController {
-
-	private List<Customer> customerList = new ArrayList<>();
+public class CustomerController extends connect_DB {
+	
+	// private List<Customer> customerList = new ArrayList<>();
 
 	public CustomerController(List<Customer> customerList) {
 		super();
-		this.customerList = customerList;
+		// this.customerList = customerList;
 	}
 
-
-	public void addCustomer(String username, String password) {
+	public void addCustomer(String username, String password, int privilege) throws SQLException {
 		boolean a = true;
-
+		Connection conn = getDBConnection();
+		Statement stmt = null;
+		ResultSet result = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-		}
-		Connection connection = null;
-		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/eshop_db?user=root&password=");
-			Statement statement = connection.createStatement();
-			ResultSet result = statement.executeQuery("select username from user");
+			stmt = conn.createStatement();
+			result = stmt.executeQuery("select username from user");
 			while (result.next()) {
 
 				if (result.getString("username").equals(username)) {
@@ -40,64 +36,58 @@ public class CustomerController {
 				}
 			}
 			if (a) {
-				statement.executeUpdate("INSERT INTO `user` (`id_user`, `username`, `password`) VALUES (NULL, '"
-						+ username + "', '" + password + "')");
+				stmt.executeUpdate("INSERT INTO `user` (`id_user`, `username`, `password`, `privilege`) VALUES (NULL, '"
+						+ username + "', '" + password + "', '" + privilege + "')");
 			}
 
-			connection.close();
-		} catch (SQLException sx) {
-			System.out.println("SQLException: " + sx.getMessage());
-			System.out.println("SQLState: " + sx.getSQLState());
-			System.out.println("VendorError: " + sx.getErrorCode());
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
 
 	}
 
-	public Customer searchByName(String username) {
-
+	public void searchByName(String username) throws SQLException {
+		Connection conn = getDBConnection();
+		Statement stmt = null;
+		ResultSet result = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-		}
-		Connection connection = null;
-		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/eshop_db?user=root&password=");
-			Statement statement = connection.createStatement();
-			ResultSet result = statement
-					.executeQuery("select username from user where username like '" + username + "%'");
+			
+			stmt = conn.createStatement();
+			result = stmt.executeQuery("select username from user where username like '" + username + "%'");
 			while (result.next()) {
 				System.out.println("Search resut: ");
 				System.out.print(result.getString("username"));
 				System.out.println("\n");
-
 			}
-
-			connection.close();
-		} catch (SQLException sx) {
-			System.out.println("SQLException: " + sx.getMessage());
-			System.out.println("SQLState: " + sx.getSQLState());
-			System.out.println("VendorError: " + sx.getErrorCode());
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
-
-		return null;
 	}
 
-	public void deleteCustomer(String name) {
+	public void deleteCustomer(String name) throws SQLException {
+		Connection conn = getDBConnection();
+		Statement stmt = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver").newInstance();
-		} catch (Exception ex) {
-		}
-		Connection connection = null;
-		try {
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/eshop_db?user=root&password=");
-			Statement statement = connection.createStatement();
-			statement.executeUpdate("DELETE FROM user WHERE username='" + name + "';");
+			stmt = conn.createStatement();
+			stmt.executeUpdate("DELETE FROM user WHERE username='" + name + "';");
 
-			connection.close();
-		} catch (SQLException sx) {
-			System.out.println("SQLException: " + sx.getMessage());
-			System.out.println("SQLState: " + sx.getSQLState());
-			System.out.println("VendorError: " + sx.getErrorCode());
+		}finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
 		}
 	}
 
